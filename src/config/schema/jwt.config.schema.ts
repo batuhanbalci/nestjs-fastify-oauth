@@ -1,8 +1,6 @@
 import Joi from 'joi';
 
-export const validationSchema = Joi.object({
-  PORT: Joi.number().port().required(),
-  DATABASE_URL: Joi.string().required(),
+export const jwtValidationSchema = Joi.object({
   JWT_ACCESS_TIME: Joi.number().required(),
   JWT_CONFIRMATION_SECRET: Joi.string().required(),
   JWT_CONFIRMATION_TIME: Joi.number().required(),
