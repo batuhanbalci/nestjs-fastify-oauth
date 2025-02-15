@@ -6,6 +6,7 @@ import {
   appConfig,
   databaseConfig,
   jwtConfig,
+  oauthConfig,
   validationSchema,
 } from './config';
 import { PrismaModule } from './prisma/prisma.module';
@@ -18,7 +19,7 @@ import { PrismaModule } from './prisma/prisma.module';
       validationOptions: {
         abortEarly: true,
       },
-      load: [appConfig, databaseConfig, jwtConfig],
+      load: [appConfig, databaseConfig, jwtConfig, oauthConfig],
     }),
     PrismaModule,
   ],
