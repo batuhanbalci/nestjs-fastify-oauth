@@ -1,3 +1,8 @@
+import fastifyCookie from '@fastify/cookie';
+import fastifyCors from '@fastify/cors';
+import fastifyCsrfProtection from '@fastify/csrf-protection';
+import fastifyHelmet from '@fastify/helmet';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
@@ -10,6 +15,19 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
+
+  const configService = app.get(ConfigService);
+  app.register(fastifyCookie, {
+    secret: configService.get<string>('cookie.cookieSecret'),
+  });
+  app.register(fastifyHelmet);
+  app.register(fastifyCsrfProtection, { cookieOpts: { signed: true } });
+  app.register(fastifyCors, {
+    credentials: true,
+    origin: `https://${configService.get<string>('domain')}`,
+  });
+  app.setGlobalPrefix('api');
+
   await app.listen(process.env.PORT ?? 3000);
 }
 
