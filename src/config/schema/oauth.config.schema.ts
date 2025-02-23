@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export const oauthValidationSchema = Joi.object({
+export const oauthValidationSchema = {
   MICROSOFT_CLIENT_ID: Joi.string().optional(),
   MICROSOFT_CLIENT_SECRET: Joi.string().optional(),
   GOOGLE_CLIENT_ID: Joi.string().optional(),
@@ -9,4 +9,4 @@ export const oauthValidationSchema = Joi.object({
   FACEBOOK_CLIENT_SECRET: Joi.string().optional(),
   GITHUB_CLIENT_ID: Joi.string().optional(),
   GITHUB_CLIENT_SECRET: Joi.string().optional(),
-});
+};

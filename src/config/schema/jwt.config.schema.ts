@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export const jwtValidationSchema = Joi.object({
+export const jwtValidationSchema = {
   JWT_ACCESS_TIME: Joi.number().required(),
   JWT_CONFIRMATION_SECRET: Joi.string().required(),
   JWT_CONFIRMATION_TIME: Joi.number().required(),
@@ -8,4 +8,4 @@ export const jwtValidationSchema = Joi.object({
   JWT_RESET_PASSWORD_TIME: Joi.number().required(),
   JWT_REFRESH_SECRET: Joi.string().required(),
   JWT_REFRESH_TIME: Joi.number().required(),
-});
+};
