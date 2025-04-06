@@ -6,7 +6,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { User } from '@prisma/client';
 import * as jwt from 'jsonwebtoken';
-import { IJwt } from 'src/config/interfaces';
+import { IJwtConfig } from 'src/config/interfaces';
 import { v4 } from 'uuid';
 import { TokenTypeEnum } from './enums';
 import {
@@ -20,13 +20,13 @@ import {
 
 @Injectable()
 export class JwtService {
-  private readonly jwtConfig: IJwt;
+  private readonly jwtConfig: IJwtConfig;
   private readonly issuer: string;
   private readonly domain: string;
 
   constructor(private readonly config: ConfigService) {
-    this.jwtConfig = this.config.get<IJwt>('jwt')!;
-    this.issuer = this.config.get<string>('id')!;
+    this.jwtConfig = this.config.get<IJwtConfig>('jwt')!;
+    this.issuer = this.config.get<string>('app.id')!;
     this.domain = this.config.get<string>('domain')!;
   }
 
@@ -97,7 +97,7 @@ export class JwtService {
 
     switch (tokenType) {
       case TokenTypeEnum.ACCESS: {
-        const { privateKey, time: accessTime } = this.jwtConfig.access;
+        const { privateKey, time: accessTime } = this.jwtConfig.jwt.access;
         return JwtService.generateTokenAsync({ id: user.id }, privateKey, {
           ...jwtOptions,
           expiresIn: accessTime,
@@ -106,7 +106,7 @@ export class JwtService {
       }
       case TokenTypeEnum.REFRESH: {
         const { secret: refreshSecret, time: refreshTime } =
-          this.jwtConfig.refresh;
+          this.jwtConfig.jwt.refresh;
         return JwtService.generateTokenAsync(
           {
             id: user.id,
@@ -122,7 +122,7 @@ export class JwtService {
       }
       case TokenTypeEnum.CONFIRMATION:
       case TokenTypeEnum.RESET_PASSWORD: {
-        const { secret, time } = this.jwtConfig[tokenType];
+        const { secret, time } = this.jwtConfig.jwt[tokenType];
         return JwtService.generateTokenAsync(
           { id: user.id, confirmed: user.confirmed },
           secret,
@@ -145,7 +145,7 @@ export class JwtService {
 
     switch (tokenType) {
       case TokenTypeEnum.ACCESS: {
-        const { publicKey, time: accessTime } = this.jwtConfig.access;
+        const { publicKey, time: accessTime } = this.jwtConfig.jwt.access;
         return JwtService.throwBadRequest(
           JwtService.verifyTokenAsync(token, publicKey, {
             ...jwtOptions,
@@ -157,7 +157,7 @@ export class JwtService {
       case TokenTypeEnum.REFRESH:
       case TokenTypeEnum.CONFIRMATION:
       case TokenTypeEnum.RESET_PASSWORD: {
-        const { secret, time } = this.jwtConfig[tokenType];
+        const { secret, time } = this.jwtConfig.jwt[tokenType];
         return JwtService.throwBadRequest(
           JwtService.verifyTokenAsync(token, secret, {
             ...jwtOptions,
