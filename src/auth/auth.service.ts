@@ -11,6 +11,7 @@ import { isDefined } from 'class-validator';
 import dayjs from 'dayjs';
 import { CommonService } from 'src/common/common.service';
 import { IMessageResponse } from 'src/common/interfaces';
+import { MailService } from 'src/mail/mail.service';
 import { UsersService } from 'src/users/users.service';
 import {
   ChangePasswordDto,
@@ -32,6 +33,7 @@ export class AuthService {
     private readonly commonService: CommonService,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   public async register(
@@ -51,8 +53,7 @@ export class AuthService {
       TokenTypeEnum.CONFIRMATION,
       domain,
     );
-    //TODO: send confirmation email
-    console.log(confirmationToken);
+    this.mailService.sendConfirmationEmail(user, confirmationToken);
 
     return this.commonService.generateMessageResponse(
       'Registration successful',
@@ -87,9 +88,7 @@ export class AuthService {
         TokenTypeEnum.CONFIRMATION,
         domain,
       );
-
-      //TODO: send confirmation email
-      console.log(confirmationToken);
+      this.mailService.sendConfirmationEmail(user, confirmationToken);
 
       throw new UnauthorizedException(
         'Please confirm your email, a new email has been sent',
@@ -140,8 +139,7 @@ export class AuthService {
         domain,
       );
 
-      console.log(resetToken);
-      //TODO: send reset password email
+      this.mailService.sendResetPasswordEmail(user, resetToken);
     }
 
     return this.commonService.generateMessageResponse(
