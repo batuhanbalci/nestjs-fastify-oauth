@@ -7,15 +7,18 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { AuthGuard } from './auth/guards';
+import { AwsModule } from './aws/aws.module';
 import { CommonModule } from './common/common.module';
 import {
   appConfig,
+  awsConfig,
   cookieConfig,
   databaseConfig,
   jwtConfig,
   oauthConfig,
   validationSchema,
 } from './config';
+import { MailModule } from './mail/mail.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 
@@ -27,7 +30,14 @@ import { UsersModule } from './users/users.module';
       validationOptions: {
         abortEarly: true,
       },
-      load: [appConfig, databaseConfig, jwtConfig, oauthConfig, cookieConfig],
+      load: [
+        appConfig,
+        databaseConfig,
+        jwtConfig,
+        oauthConfig,
+        cookieConfig,
+        awsConfig,
+      ],
     }),
     CacheModule.register({
       isGlobal: true,
@@ -43,6 +53,8 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     UsersModule,
     CommonModule,
+    MailModule,
+    AwsModule,
   ],
   controllers: [AppController],
   providers: [
