@@ -27,7 +27,7 @@ export class JwtService {
   constructor(private readonly config: ConfigService) {
     this.jwtConfig = this.config.get<IJwtConfig>('jwt')!;
     this.issuer = this.config.get<string>('app.id')!;
-    this.domain = this.config.get<string>('domain')!;
+    this.domain = this.config.get<string>('app.domain')!;
   }
 
   private static async generateTokenAsync(
