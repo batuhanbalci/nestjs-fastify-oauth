@@ -16,7 +16,8 @@ export class UsersService {
   public async create(
     provider: OAuthProviderEnum,
     email: string,
-    name: string,
+    firstName: string,
+    lastName: string,
     password?: string,
   ): Promise<User> {
     const isConfirmed = provider !== OAuthProviderEnum.LOCAL;
@@ -25,6 +26,8 @@ export class UsersService {
     const user = await this.prisma.user.create({
       data: {
         email: formattedEmail,
+        firstName: firstName,
+        lastName: lastName,
         password: password ? await argon.hash(password) : 'UNSET',
         confirmed: isConfirmed,
       },
@@ -105,7 +108,9 @@ export class UsersService {
     id: number,
     isConfirmed: boolean,
   ): Promise<User> {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
 
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -113,6 +118,35 @@ export class UsersService {
 
     if (user.confirmed !== isConfirmed) {
       throw new UnauthorizedException('Email not confirmed');
+    }
+
+    return user;
+  }
+
+  public async findOrCreateForOAuth(
+    provider: OAuthProviderEnum,
+    email: string,
+    firstName?: string,
+    lastName?: string,
+  ) {
+    const formattedEmail = email.toLowerCase();
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email: formattedEmail,
+      },
+      include: {
+        OAuthProvider: true,
+      },
+    });
+
+    if (!user) {
+      if (!firstName || !lastName) {
+        throw new BadRequestException('First name and last name are required');
+      }
+      return this.create(provider, formattedEmail, email, firstName, lastName);
+    }
+    if (!user.OAuthProvider.find((p) => p.provider === provider)) {
+      await this.createOAuthProvider(provider, user.id);
     }
 
     return user;
