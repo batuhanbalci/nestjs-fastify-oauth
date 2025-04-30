@@ -56,7 +56,7 @@ export class OAuthService {
     url: string,
   ): OAuthClass | null {
     const client = configService.get<IOauthClient | null>(
-      `oauth2.${provider.toLowerCase()}`,
+      `oauth.${provider.toLowerCase()}`,
     );
 
     if (!client) {
