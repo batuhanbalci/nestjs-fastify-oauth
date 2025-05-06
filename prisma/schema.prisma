@@ -18,8 +18,8 @@ model User {
   id        Int     @id @default(autoincrement()) @map("id")
   email     String  @unique
   password  String
-  firstName String
-  lastName  String
+  firstName String  @map("first_name")
+  lastName  String  @map("last_name")
   confirmed Boolean @default(false)
   blocked   Boolean @default(false)
 
@@ -27,8 +27,8 @@ model User {
   OAuthProvider OAuthProvider[]
 
   // Datetime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map(name: "users")
 }
@@ -39,11 +39,11 @@ model OAuthProvider {
 
   // Relations
   user   User @relation(fields: [userId], references: [id])
-  userId Int
+  userId Int  @map("user_id")
 
   // Datetime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map(name: "oauth_providers")
 }
